@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>시티오씨엘 9단지 스마트 견적 (분리형)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>시티오씨엘 9단지 스마트 견적 (모바일 최적화)</title>
     <style>
         :root {
             --primary-color: #03c75a; 
@@ -17,15 +17,16 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 10px;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
         }
         .container {
             max-width: 850px;
             margin: 0 auto;
             background: #fff;
-            padding: 25px;
+            padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         .header {
             display: flex;
@@ -35,53 +36,44 @@
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
-        h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin: 0;
-            color: #111;
-        }
+        h1 { font-size: 22px; font-weight: 700; margin: 0; color: #111; }
         .badge {
             background: var(--primary-color);
             color: white;
             font-size: 12px;
             font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 6px;
         }
+        
         /* Global Controls */
-        .global-controls {
+        .global-controls, .interest-controls {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             background: #f9fafb;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             margin-bottom: 20px;
         }
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 8px;
-        }
+        .control-group { display: flex; flex-direction: column; }
+        label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px; }
         select, input {
-            padding: 10px 12px;
+            padding: 12px;
             border: 1px solid #ced4da;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 15px;
             outline: none;
             transition: all 0.2s;
+            background-color: #fff;
+            appearance: none; /* For mobile select styles */
         }
         select:focus, input:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(3, 199, 90, 0.15);
         }
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -100,21 +92,13 @@
             color: #888;
             transition: 0.3s;
         }
-        .tab-btn:hover {
-            color: #444;
-        }
         .tab-btn.active {
             color: var(--primary-color);
             border-bottom: 3px solid var(--primary-color);
             margin-bottom: -2px;
         }
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
@@ -136,37 +120,48 @@
             margin-right: 8px;
             border-radius: 2px;
         }
-        .table-responsive {
-            overflow-x: auto;
+        
+        /* Price Grid (Replaces old table) */
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            min-width: 500px;
-        }
-        th, td {
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #fff;
             border: 1px solid var(--border-color);
-            padding: 12px 14px;
-            font-size: 14px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
-        th {
-            background-color: #f8f9fa;
-            text-align: center;
-            font-weight: 600;
-            color: #333;
+        .price-item.total {
+            grid-column: 1 / -1;
+            background: #f0fdf4;
+            border-color: #bbf7d0;
         }
-        td { text-align: right; }
+        .price-item .label { font-size: 14px; font-weight: 600; color: #555; }
+        .price-item .value { font-size: 15px; font-weight: bold; color: #333; }
+        .price-item.total .value { font-size: 20px; color: var(--primary-color); }
+
+        /* Desktop Tables */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid var(--border-color); padding: 12px 14px; font-size: 14px; text-align: right; }
+        th { background-color: #f8f9fa; text-align: center; font-weight: 600; color: #333; }
         .text-center { text-align: center; }
-        .col-title { text-align: center; font-weight: bold; background-color: #f8f9fa; color: #444; }
-        .total-row { background-color: #f0fdf4; font-weight: bold; }
-        .val-total { color: var(--primary-color); font-size: 16px; }
         .highlight { color: #f43f5e; font-weight: bold; }
-        .grand-total { font-size: 18px; font-weight: bold; background-color: #fff0f2; color: #e11d48; }
+        .val-total { color: var(--primary-color); font-weight: bold; }
+        .total-row td { background-color: #f0fdf4; font-weight: bold; }
+        .grand-total-row td { background-color: #fff0f2; font-weight: bold; color: #e11d48; }
+        .grand-total { font-size: 18px; }
+
         .total-price-box {
             background: #fff8f8;
             border: 1px solid #ffccd5;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             text-align: center;
             margin-bottom: 20px;
@@ -174,23 +169,61 @@
             font-weight: bold;
             color: #444;
         }
-        .total-price-box span {
-            font-size: 20px;
-            color: #e11d48;
-            margin-left: 10px;
-        }
+        .total-price-box span { font-size: 22px; color: #e11d48; margin-left: 10px; display: inline-block; }
         .note { font-size: 13px; color: #777; line-height: 1.6; margin-top: 5px; }
-        
-        /* Interest specific controls */
-        .interest-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-            margin-bottom: 20px;
+
+        /* ==========================================
+           모바일 최적화 (Mobile Optimization) 
+           ========================================== */
+        @media (max-width: 650px) {
+            body { padding: 0; }
+            .container { border-radius: 0; padding: 20px 15px; box-shadow: none; }
+            h1 { font-size: 19px; }
+            .global-controls, .interest-controls { grid-template-columns: 1fr; gap: 12px; padding: 15px; }
+            .price-grid { grid-template-columns: 1fr; gap: 10px; }
+            .tabs { margin-bottom: 20px; }
+            .tab-btn { padding: 12px 5px; font-size: 15px; }
+            .total-price-box { padding: 15px; font-size: 15px; display: flex; flex-direction: column; gap: 5px; }
+            
+            /* Table -> Cards 변환 마법 */
+            thead { display: none; }
+            table, tbody, tr, td { display: block; width: 100%; box-sizing: border-box; }
+            tr { 
+                margin-bottom: 12px; 
+                border: 1px solid var(--border-color); 
+                border-radius: 10px; 
+                background: #fff; 
+                box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
+                overflow: hidden;
+            }
+            td { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                text-align: right; 
+                border: none; 
+                border-bottom: 1px solid #f0f0f0; 
+                padding: 12px 15px; 
+            }
+            td:last-child { border-bottom: none; }
+            td::before { 
+                content: attr(data-label); 
+                font-weight: 600; 
+                color: #666; 
+                font-size: 13px;
+                text-align: left; 
+            }
+            
+            .hide-mobile { display: none !important; }
+            
+            /* 모바일 Total Rows 스타일링 */
+            .total-row { border-color: #bbf7d0; }
+            .total-row td { background-color: #f0fdf4; border-bottom-color: #dcfce7; }
+            
+            .grand-total-row { border-color: #fecdd3; }
+            .grand-total-row td { background-color: #fff0f2; padding: 15px; border-bottom: none; }
+            .grand-total-row td::before { color: #e11d48; font-size: 14px; font-weight: bold; }
+            .grand-total { font-size: 18px; }
         }
     </style>
 </head>
@@ -198,10 +231,9 @@
     <div class="container">
         <div class="header">
             <h1>시티오씨엘 9단지 스마트 견적</h1>
-            <span class="badge">분리형 UI</span>
+            <span class="badge">모바일 최적화</span>
         </div>
         
-        <!-- Global Controls -->
         <div class="global-controls">
             <div class="control-group">
                 <label>타입 선택</label>
@@ -213,49 +245,49 @@
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('basic')">분양 견적서</button>
-            <button class="tab-btn" onclick="switchTab('interest')">중도금 이자 계산기</button>
+            <button class="tab-btn" onclick="switchTab('interest')">중도금 이자 계산</button>
         </div>
 
         <!-- Tab 1: 분양 견적서 -->
         <div id="tab-basic" class="tab-content active">
             <div class="section-title">공급 금액 상세</div>
-            <div class="table-responsive">
-                <table id="priceTable">
-                    <tr>
-                        <td class="col-title" width="15%">총 분양가</td>
-                        <td id="valTotal" width="35%" class="total-row val-total">0원</td>
-                        <td class="col-title" width="15%">대지비</td>
-                        <td id="valLand" width="35%">0원</td>
-                    </tr>
-                    <tr>
-                        <td class="col-title">건축비</td>
-                        <td id="valBuild">0원</td>
-                        <td class="col-title">부가세</td>
-                        <td id="valVat">0원</td>
-                    </tr>
-                </table>
+            <!-- 모바일/PC 모두 깔끔한 Grid UI 사용 -->
+            <div class="price-grid">
+                <div class="price-item total">
+                    <span class="label">총 분양가</span>
+                    <span class="value val-total" id="valTotal">0원</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">대지비</span>
+                    <span class="value" id="valLand">0원</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">건축비</span>
+                    <span class="value" id="valBuild">0원</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">부가세</span>
+                    <span class="value" id="valVat">0원</span>
+                </div>
             </div>
 
             <div class="section-title">납부 일정 및 금액</div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>구분</th>
-                            <th>납부일</th>
-                            <th>비율</th>
-                            <th>납부금액(원)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="basicScheduleBody">
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>납부일</th>
+                        <th>비율</th>
+                        <th>납부금액(원)</th>
+                    </tr>
+                </thead>
+                <tbody id="basicScheduleBody">
+                </tbody>
+            </table>
             <div class="note">
-                ※ 중도금 대출 이자는 상단의 [중도금 이자 계산기] 탭을 확인하시기 바랍니다.
+                ※ 중도금 대출 이자는 상단의 [중도금 이자 계산] 탭을 확인하시기 바랍니다.
             </div>
         </div>
 
@@ -273,29 +305,27 @@
             </div>
 
             <div class="total-price-box">
-                선택 호실 총 분양가: <span id="intTotalVal">0원</span>
+                선택 호실 총 분양가 <span id="intTotalVal">0원</span>
             </div>
 
-            <div class="section-title">중도금 이자 시뮬레이션 (단리 일할계산)</div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>구분</th>
-                            <th>납부일</th>
-                            <th>중도금액(원)</th>
-                            <th>대출기간(일)</th>
-                            <th>예상 이자(원)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="interestScheduleBody">
-                    </tbody>
-                </table>
-            </div>
+            <div class="section-title">이자 시뮬레이션 (단리 일할계산)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>납부일</th>
+                        <th>중도금액(원)</th>
+                        <th>대출기간(일)</th>
+                        <th>예상 이자(원)</th>
+                    </tr>
+                </thead>
+                <tbody id="interestScheduleBody">
+                </tbody>
+            </table>
             <div class="note">
                 ※ 대출기간(일) = 입주 예정일 - 회차별 납부일<br>
                 ※ 예상 이자 = 중도금액 × 예상 이자율 × (대출기간 / 365)<br>
-                ※ 본 계산기는 상담 보조용으로, 실제 대출 실행일 및 금리 변동에 따라 오차가 발생할 수 있습니다.
+                ※ 본 계산기는 상담 보조용으로, 실제 실행일에 따라 오차가 발생할 수 있습니다.
             </div>
         </div>
 
@@ -310,16 +340,13 @@
         const interestRateInput = document.getElementById('interestRate');
         const moveInDateInput = document.getElementById('moveInDate');
 
-        // Tab Switch Logic
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
             document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
         }
 
-        // Initialize Dropdowns
         const types = [...new Set(rawData.map(d => String(d.타입)))];
         types.forEach(t => {
             const opt = document.createElement('option');
@@ -330,7 +357,6 @@
         function updateFloors() {
             const selectedType = typeSelect.value;
             const floors = rawData.filter(d => String(d.타입) === selectedType).map(d => d.층구분);
-            
             const uniqueFloors = [...new Set(floors)];
             const previousFloor = floorSelect.value;
             
@@ -341,10 +367,7 @@
                 floorSelect.appendChild(opt);
             });
             
-            if(uniqueFloors.includes(previousFloor)) {
-                floorSelect.value = previousFloor;
-            }
-            
+            if(uniqueFloors.includes(previousFloor)) floorSelect.value = previousFloor;
             updateQuote();
         }
 
@@ -360,23 +383,18 @@
         function updateQuote() {
             const selectedType = typeSelect.value;
             const selectedFloor = floorSelect.value;
-            
             const data = rawData.find(d => String(d.타입) === String(selectedType) && String(d.층구분) === String(selectedFloor));
             if(!data) return;
 
-            // Update Basic Quote Tab
             document.getElementById('valTotal').textContent = formatWon(data.총분양가) + ' 원';
             document.getElementById('valLand').textContent = formatWon(data.대지비) + ' 원';
             document.getElementById('valBuild').textContent = formatWon(data.건축비) + ' 원';
             document.getElementById('valVat').textContent = formatWon(data.부가가치세) + ' 원';
-
-            // Update Total in Interest Tab
             document.getElementById('intTotalVal').textContent = formatWon(data.총분양가) + ' 원';
 
             const rate = parseFloat(interestRateInput.value) / 100 || 0;
             const moveInDate = moveInDateInput.value;
 
-            // Schedules
             const basicSchedule = [
                 { name: '계약금 1차', date: '계약시', ratio: '정액제', amt: data.계약금1차 },
                 { name: '계약금 2차', date: '계약후 30일 이내', ratio: '잔여금', amt: data.계약금2차 },
@@ -386,7 +404,7 @@
                 { name: '중도금 4회', date: '2028-12-07', ratio: '10%', amt: data.중도금4회 },
                 { name: '중도금 5회', date: '2029-05-04', ratio: '10%', amt: data.중도금5회 },
                 { name: '중도금 6회', date: '2029-10-05', ratio: '10%', amt: data.중도금6회 },
-                { name: '잔금', date: '2030-04-30 (입주지정일)', ratio: '35%', amt: data.잔금 }
+                { name: '잔금', date: '2030-04-30 (입주)', ratio: '35%', amt: data.잔금 }
             ];
 
             const interestSchedule = [
@@ -398,7 +416,6 @@
                 { name: '중도금 6회', date: '2029-10-05', amt: data.중도금6회 },
             ];
 
-            // Render Basic Schedule
             const basicBody = document.getElementById('basicScheduleBody');
             basicBody.innerHTML = '';
             let basicTotalAmt = 0;
@@ -407,21 +424,20 @@
                 basicTotalAmt += item.amt;
                 basicBody.innerHTML += `
                     <tr>
-                        <td class="text-center">${item.name}</td>
-                        <td class="text-center">${item.date}</td>
-                        <td class="text-center">${item.ratio}</td>
-                        <td>${formatWon(item.amt)}</td>
+                        <td data-label="구분" class="text-center">${item.name}</td>
+                        <td data-label="납부일" class="text-center">${item.date}</td>
+                        <td data-label="비율" class="text-center">${item.ratio}</td>
+                        <td data-label="납부금액">${formatWon(item.amt)} 원</td>
                     </tr>
                 `;
             });
             basicBody.innerHTML += `
                 <tr class="total-row">
-                    <td colspan="3" class="text-center">합 계</td>
-                    <td class="val-total">${formatWon(basicTotalAmt)} 원</td>
+                    <td class="hide-mobile" colspan="3" class="text-center">합 계</td>
+                    <td data-label="총 납부 합계" class="val-total">${formatWon(basicTotalAmt)} 원</td>
                 </tr>
             `;
 
-            // Render Interest Schedule
             const intBody = document.getElementById('interestScheduleBody');
             intBody.innerHTML = '';
             let intTotalAmt = 0;
@@ -436,30 +452,29 @@
 
                 intBody.innerHTML += `
                     <tr>
-                        <td class="text-center">${item.name}</td>
-                        <td class="text-center">${item.date}</td>
-                        <td>${formatWon(item.amt)}</td>
-                        <td class="text-center">${days} 일</td>
-                        <td class="highlight">${formatWon(interest)}</td>
+                        <td data-label="구분" class="text-center">${item.name}</td>
+                        <td data-label="납부일" class="text-center">${item.date}</td>
+                        <td data-label="중도금액">${formatWon(item.amt)} 원</td>
+                        <td data-label="대출기간" class="text-center">${days} 일</td>
+                        <td data-label="예상 이자" class="highlight">${formatWon(interest)} 원</td>
                     </tr>
                 `;
             });
 
             intBody.innerHTML += `
                 <tr class="total-row">
-                    <td colspan="2" class="text-center">중도금 / 이자 합계</td>
-                    <td>${formatWon(intTotalAmt)}</td>
-                    <td class="text-center">-</td>
-                    <td class="highlight">${formatWon(intTotalInterest)} 원</td>
+                    <td class="hide-mobile" colspan="2" class="text-center">중도금 / 이자 합계</td>
+                    <td data-label="중도금 총액">${formatWon(intTotalAmt)} 원</td>
+                    <td class="hide-mobile text-center">-</td>
+                    <td data-label="총 예상 이자" class="highlight">${formatWon(intTotalInterest)} 원</td>
                 </tr>
-                <tr>
-                    <td colspan="4" class="text-center" style="font-size: 15px; font-weight: bold; background-color: #fff0f2;">총 소요금액 (분양가 + 중도금 총 이자)</td>
-                    <td class="grand-total">${formatWon(data.총분양가 + intTotalInterest)} 원</td>
+                <tr class="grand-total-row">
+                    <td class="hide-mobile" colspan="4" class="text-center">총 소요금액 (분양가 + 중도금 총 이자)</td>
+                    <td data-label="총 소요금액 (분양가+이자)" class="grand-total">${formatWon(data.총분양가 + intTotalInterest)} 원</td>
                 </tr>
             `;
         }
 
-        // Events
         typeSelect.addEventListener('change', updateFloors);
         floorSelect.addEventListener('change', updateQuote);
         interestRateInput.addEventListener('input', updateQuote);
